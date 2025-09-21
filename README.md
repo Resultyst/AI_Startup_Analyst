@@ -6,9 +6,8 @@
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/) 
 [![Google AI](https://img.shields.io/badge/Google%20AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/) 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-[🚀 Features](#-features) • [🛠️ Tech Stack](#-tech-stack) • [📦 Installation](#-installation) • [🎯 Usage](#-usage) • [📖 API](#-api) • [🏗️ Architecture](#-architecture)
+[🚀 Features](#-features) • [🛠️ Tech Stack](#-tech-stack) 
 
 </div>
 
@@ -69,6 +68,3 @@ Early-stage investors are drowning in unstructured data: pitch decks, founder ca
 
 ---
 
-
-# venv\Scripts\activate  # Windows
-pip install -r requirements.txt
