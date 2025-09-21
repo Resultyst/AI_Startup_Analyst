@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+PyPDF2
+google-generativeai
+google-cloud-documentai
+google-cloud-speech
+google-api-core
+python-jose

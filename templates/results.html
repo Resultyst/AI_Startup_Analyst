@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis Results</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+
+        .section h3 {
+            margin-top: 15px;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .strength { color: #2e7d32; font-weight: bold; }
+        .risk { color: #c62828; font-weight: bold; }
+        .question { color: #1565c0; font-weight: bold; }
+        .debug { 
+            background: #e3f2fd; 
+            border-left: 4px solid #2196F3;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        pre {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .nav-links {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .nav-links a {
+            margin: 0 10px;
+            padding: 10px 16px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: #45a049;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Analysis Results - {{ analysis_type.upper() }} #{{ analysis_id.split('_')[-1] }}</h1>
+        <p>ID: {{ analysis_id }}</p>
+    </header>
+
+    <div class="container">
+
+        {% if errors.deck %}
+        <div class="error">
+            <strong>Deck Processing Error:</strong> {{ errors.deck }}
+        </div>
+        {% endif %}
+
+        {% if errors.call %}
+        <div class="error">
+            <strong>Call Processing Error:</strong> {{ errors.call }}
+        </div>
+        {% endif %}
+
+        {% if errors.advanced %}
+        <div class="error">
+            <strong>Advanced Analysis Error:</strong> {{ errors.advanced }}
+        </div>
+        {% endif %}
+
+        <div class="section debug">
+            <h3>🔍 Debug Information</h3>
+            <p><strong>Advanced Analysis Object:</strong> {{ advanced_analysis | tojson }}</p>
+            <p><strong>Has Advanced Analysis:</strong> {{ advanced_analysis is defined and advanced_analysis }}</p>
+            {% if advanced_analysis %}
+            <p><strong>Keys in Advanced Analysis:</strong> {{ advanced_analysis.keys() | list }}</p>
+            {% endif %}
+        </div>
+
+        {% if deck_analysis %}
+        <div class="section">
+            <h2>📊 Pitch Deck Analysis</h2>
+
+            <h3>Extracted Facts</h3>
+            <pre>{{ deck_analysis.extracted_facts | tojson(indent=2) }}</pre>
+
+            <h3>Critical Analysis</h3>
+
+            <h4>Strengths</h4>
+            <ul>
+                {% for item in deck_analysis.critical_analysis.strengths %}
+                <li class="strength">{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+            <h4>Red Flags</h4>
+            <ul>
+                {% for item in deck_analysis.critical_analysis.red_flags %}
+                <li class="risk">{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+            <h4>Investor Questions</h4>
+            <ul>
+                {% for item in deck_analysis.critical_analysis.investor_questions %}
+                <li class="question">{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Executive Summary</h3>
+            <p>{{ deck_analysis.final_summary }}</p>
+        </div>
+        {% endif %}
+
+        {% if advanced_analysis and (advanced_analysis.sector_analysis or advanced_analysis.financial_health_checks or advanced_analysis.sentiment_analysis) %}
+        <div class="section">
+            <h2>🧠 Advanced Analysis</h2>
+            
+            {% if advanced_analysis.detected_sector %}
+            <p><strong>Detected Sector:</strong> <span style="background: #e8f5e8; padding: 4px 8px; border-radius: 4px;">{{ advanced_analysis.detected_sector.upper() }}</span></p>
+            {% endif %}
+            
+            {% if advanced_analysis.sector_analysis and advanced_analysis.sector_analysis is mapping %}
+            <h3>📈 Sector Analysis</h3>
+            {% if advanced_analysis.sector_analysis.error %}
+            <div class="error">Sector Analysis Error: {{ advanced_analysis.sector_analysis.error }}</div>
+            {% else %}
+            <pre>{{ advanced_analysis.sector_analysis | tojson(indent=2) }}</pre>
+            {% endif %}
+            {% endif %}
+            
+            {% if advanced_analysis.financial_health_checks and advanced_analysis.financial_health_checks is iterable and advanced_analysis.financial_health_checks|length > 0 %}
+            <h3>💰 Financial Health Checks</h3>
+            <ul>
+                {% for check in advanced_analysis.financial_health_checks %}
+                <li style="color: {% if '⚠️' in check %}#c62828{% else %}#2e7d32{% endif %};">
+                    {{ check }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            {% if advanced_analysis.sentiment_analysis and advanced_analysis.sentiment_analysis is mapping %}
+            <h3>😊 Sentiment Analysis</h3>
+            {% if advanced_analysis.sentiment_analysis.error %}
+            <div class="error">Sentiment Analysis Error: {{ advanced_analysis.sentiment_analysis.error }}</div>
+            {% else %}
+            <pre>{{ advanced_analysis.sentiment_analysis | tojson(indent=2) }}</pre>
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if call_analysis %}
+        <div class="section">
+            <h2>🎤 Founder Call Analysis</h2>
+            <pre>{{ call_analysis | tojson(indent=2) }}</pre>
+        </div>
+        {% endif %}
+
+        <div class="nav-links">
+            <a href="/dashboard">📁 View Analysis History</a>
+            <a href="/">➕ Analyze Another</a>
+        </div>
+    </div>
+
+    <footer>
+        &copy; {{ current_year }} AI Analyst — Turning data into insight.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearElement = document.querySelector('footer');
+            if (yearElement) {
+                yearElement.innerHTML = yearElement.innerHTML.replace('{{ current_year }}', new Date().getFullYear());
+            }
+        });
+    </script>
+</body>
+</html>

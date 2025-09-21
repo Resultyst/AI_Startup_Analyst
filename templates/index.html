@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Analyst Prototype</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header h1 span {
+            font-size: 2rem;
+        }
+
+        header .top-right {
+            font-size: 0.95rem;
+        }
+
+        header .top-right a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 15px;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .message, .error {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><span>🤖</span> AI Analyst Prototype</h1>
+        <div class="top-right">
+            {% if current_user %}
+                <span>Welcome, {{ current_user }}!</span>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        <div class="intro">
+            <p>Upload a <strong>pitch deck</strong> and/or a <strong>founder call recording</strong> for instant AI-driven analysis.</p>
+        </div>
+
+        {% if message %}
+        <div class="message">{{ message }}</div>
+        {% endif %}
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form action="/analyze/" method="post" enctype="multipart/form-data">
+            <div class="card">
+                <h3>Pitch Deck (PDF)</h3>
+                <input type="file" name="deck_file" accept=".pdf">
+            </div>
+
+            <div class="card">
+                <h3>Founder Call (Audio - MP3, WAV)</h3>
+                <input type="file" name="call_file" accept="audio/*">
+            </div>
+
+            <div class="card" style="text-align:center;">
+                <button type="submit">🚀 Analyze</button>
+            </div>
+        </form>
+
+        <div class="links">
+            <a href="/dashboard">📊 View Analysis History →</a>
+        </div>
+    </main>
+<div id="loadingOverlay" style="
+display: none;
+position: fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background: rgba(255,255,255,0.8);
+z-index:9999;
+text-align:center;
+padding-top: 200px;
+font-size: 1.5rem;
+color: #2e7d32;
+font-weight: bold;
+">
+<div>
+    🚀 Analyzing... <span id="progressPercent">0%</span>
+</div>
+</div>
+<script>
+    const form = document.querySelector("form");
+    const overlay = document.getElementById("loadingOverlay");
+    const progressText = document.getElementById("progressPercent");
+    
+    form.addEventListener("submit", function(event) {
+        overlay.style.display = "block";
+        
+        let percent = 0;
+        const interval = setInterval(() => {
+            percent += Math.floor(Math.random() * 5) + 1; 
+            if (percent > 95) percent = 95; 
+            progressText.textContent = percent + "%";
+        }, 300);
+    
+    
+    });
+    </script>
+    
+</body>
+</html>

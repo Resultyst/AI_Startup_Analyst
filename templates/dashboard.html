@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Analyst - Dashboard</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header a {
+            text-decoration: none;
+            background: #9C27B0;
+            padding: 10px 20px;
+            border-radius: 6px;
+            color: white;
+            transition: background 0.3s ease;
+        }
+
+        header a:hover {
+            background: #7b1fa2;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .user-info {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .user-info a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .user-info a:hover {
+            text-decoration: underline;
+        }
+
+        .analysis-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .badge-deck { background: #4CAF50; }
+        .badge-call { background: #2196F3; }
+        .badge-combined { background: #9C27B0; }
+
+        .analysis-card h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .analysis-card p {
+            margin: 5px 0;
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .btn-view { background: #2196F3; }
+        .btn-view:hover { background: #1976d2; }
+
+        .btn-download { background: #4CAF50; }
+        .btn-download:hover { background: #388e3c; }
+
+        .btn-new { background: #9C27B0; }
+        .btn-new:hover { background: #7b1fa2; }
+
+        .no-analyses {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: 50px;
+        }
+
+        .no-analyses a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .no-analyses a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📊 AI Analyst Dashboard</h1>
+        <a href="/" class="btn-new">+ New Analysis</a>
+    </header>
+
+    <div class="container">
+        <div class="user-info">
+            {% if current_user %}
+                Welcome, <strong>{{ current_user }}</strong>!
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+            {% endif %}
+        </div>
+
+        {% if not analyses %}
+            <div class="no-analyses">
+                No analyses found. <a href="/">Perform your first analysis</a>.
+            </div>
+        {% else %}
+            {% for analysis in analyses %}
+            <div class="analysis-card">
+                <h3>
+                    <span class="badge badge-{{ analysis.type }}">{{ analysis.type.upper() }}</span>
+                    Analysis #{{ analysis.id }}
+                </h3>
+                <p><strong>Date:</strong> {{ analysis.timestamp[:19] }}</p>
+                <p><strong>Files:</strong> 
+                    {% if analysis.has_deck %}📄 Pitch Deck {% endif %}
+                    {% if analysis.has_call %}🎤 Founder Call {% endif %}
+                </p>
+                <div class="actions">
+                    <a href="/analysis/{{ analysis.filename }}" class="btn btn-view">View Details</a>
+                    <a href="/download/results/{{ analysis.filename }}" class="btn btn-download">Download Results</a>
+                    {% if analysis.has_deck and analysis.deck_path %}
+                    <a href="/download/deck/{{ analysis.deck_path }}" class="btn btn-download">Download Deck</a>
+                    {% endif %}
+                    {% if analysis.has_call and analysis.call_path %}
+                    <a href="/download/call/{{ analysis.call_path }}" class="btn btn-download">Download Call</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</body>
+</html>

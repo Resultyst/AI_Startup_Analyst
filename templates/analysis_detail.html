@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis Details - {{ analysis.analysis_id }}</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .badge-deck { background: #4CAF50; }
+        .badge-call { background: #2196F3; }
+        .badge-combined { background: #9C27B0; }
+
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+
+        .section h3, .section h4 {
+            color: #444;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+
+        .strength { color: #2e7d32; font-weight: bold; }
+        .risk { color: #c62828; font-weight: bold; }
+        .question { color: #1565c0; font-weight: bold; }
+
+        pre {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .nav-links {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .nav-links a {
+            margin: 0 10px;
+            padding: 10px 16px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: #45a049;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>
+            <span class="badge badge-{{ analysis.analysis_type }}">{{ analysis.analysis_type.upper() }}</span>
+            Analysis Details: {{ analysis.analysis_id }}
+        </h1>
+        <p>Analyzed on: {{ analysis.timestamp[:19] }}</p>
+    </header>
+
+    <div class="container">
+        {% if analysis.results.deck_analysis %}
+        <div class="section">
+            <h2>📊 Pitch Deck Analysis</h2>
+
+            <h3>Extracted Facts</h3>
+            <pre>{{ analysis.results.deck_analysis.extracted_facts | tojson(indent=2) }}</pre>
+
+            <h3>Critical Analysis</h3>
+            <h4>Strengths</h4>
+            <ul>
+                {% for item in analysis.results.deck_analysis.critical_analysis.strengths %}
+                <li class="strength">{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+            <h4>Red Flags</h4>
+            <ul>
+                {% for item in analysis.results.deck_analysis.critical_analysis.red_flags %}
+                <li class="risk">{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+            <h4>Investor Questions</h4>
+            <ul>
+                {% for item in analysis.results.deck_analysis.critical_analysis.investor_questions %}
+                <li class="question">{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Executive Summary</h3>
+            <p>{{ analysis.results.deck_analysis.final_summary }}</p>
+        </div>
+        {% endif %}
+
+        {% if analysis.results.call_analysis %}
+        <div class="section">
+            <h2>🎤 Founder Call Analysis</h2>
+            <pre>{{ analysis.results.call_analysis | tojson(indent=2) }}</pre>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <h2>File Information</h2>
+            <p><strong>Analysis Results File:</strong> {{ filename }}</p>
+            {% if analysis.uploaded_files.pitch_deck %}
+            <p><strong>Pitch Deck:</strong> {{ analysis.uploaded_files.pitch_deck }}</p>
+            {% endif %}
+            {% if analysis.uploaded_files.founder_call %}
+            <p><strong>Founder Call:</strong> {{ analysis.uploaded_files.founder_call }}</p>
+            {% endif %}
+        </div>
+
+        <div class="nav-links">
+            <a href="/dashboard">📁 Back to Dashboard</a>
+            <a href="/">➕ Analyze Another</a>
+        </div>
+    </div>
+
+    <footer>
+        &copy; {{ year }} AI Analyst — Turning data into insight.
+    </footer>
+</body>
+</html>
