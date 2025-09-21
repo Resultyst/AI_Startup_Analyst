@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧠 AI Analyst | AI-Powered Startup Evaluation
+# 🧠 myve. Analyst | AI-Powered Startup Evaluation
 
 *An AI-powered platform that synthesizes unstructured startup data into concise, actionable investment insights for venture capitalists and angel investors.*
 
